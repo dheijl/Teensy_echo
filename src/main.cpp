@@ -38,11 +38,11 @@ constexpr uint8_t PIN_TOUCH_CS0 = 255;  // optional, set this only if the touchs
 //    • GND->Teensy GND(green)
 
 constexpr uint8_t PIN_SCK1 = 27;
-constexpr uint8_t PIN_MISO1 = 1;     // mandatory  (if the display has no MISO line, set this to 255 but then VSync will be disabled)
-constexpr uint8_t PIN_MOSI1 = 26;    // mandatory
-constexpr uint8_t PIN_DC1 = 38;      // mandatory, can be any pin but using pin 0 (or 38 on T4.1) provides greater performance
-constexpr uint8_t PIN_CS1 = 0;       // optional (but recommended), can be any pin.
-constexpr uint8_t PIN_SDATA_RDY = 5; // AU DATA READY signal (IN2)
+constexpr uint8_t PIN_MISO1 = 1;  // mandatory  (if the display has no MISO line, set this to 255 but then VSync will be disabled)
+constexpr uint8_t PIN_MOSI1 = 26; // mandatory
+constexpr uint8_t PIN_DC1 = 38;   // mandatory, can be any pin but using pin 0 (or 38 on T4.1) provides greater performance
+constexpr uint8_t PIN_CS1 = 0;    // optional (but recommended), can be any pin.
+// constexpr uint8_t PIN_SDATA_RDY = 5; // AU DATA READY signal (IN2)
 
 constexpr uint8_t PIN_RESET1 = 255;     // 29 optional (but recommended), can be any pin.
 constexpr uint8_t PIN_BACKLIGHT1 = 255; // optional, set this only if the screen LED pin is connected directly to the Teensy.
@@ -51,7 +51,7 @@ constexpr uint8_t PIN_TOUCH_CS1 = 255;  // optional. set this only if the touchs
 
 constexpr uint32_t SPI_SPEED = 24000000;
 
-constexpr char *tqbf = "the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n\
+const char *tqbf = "the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n\
 the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n";
 
 #define LANDSCAPE
@@ -75,7 +75,8 @@ static ILI9341_t3n tft(PIN_CS0, PIN_DC0, PIN_RESET0, PIN_MOSI0, PIN_SCK0, PIN_MI
 static void setup_spi_au();
 static void setup_spi_il9341();
 static void print_hex(uint8_t x);
-static void wait_sdata();
+static bool spi_test(uint32_t spi_speed);
+// static void wait_sdata();
 
 void setup()
 {
@@ -98,10 +99,37 @@ static unsigned char rxbuf[256];
 
 void loop()
 {
-  // wait for data ready from slave
-  wait_sdata();
-  tft.fillScreen(ILI9341_BLACK);
-  tft.setCursor(0, 0);
+  for (uint32_t speed = 12000000; speed <= 24000000; speed += 1000000)
+  {
+    tft.fillScreen(ILI9341_BLACK);
+    tft.setCursor(0, 0);
+    tft.println("Test at " + String(speed) + "MHz");
+    bool ok = true;
+    for (int i = 0; i < 1000; i++)
+    {
+      if (!spi_test(speed))
+      {
+        ok = false;
+        break;
+      }
+    }
+    if (!ok)
+    {
+      tft.println(String(speed) + "MHz test failed");
+      delay(2000);
+      break;
+    }
+    else
+    {
+      tft.println(String(speed) + "MHz test OK");
+      delay(2000);
+    }
+  }
+  delay(3000);
+}
+
+static bool spi_test(uint32_t spi_speed)
+{
   memset(txbuf, 0xff, sizeof(txbuf));
   size_t count = strlen(tqbf);
   memcpy(txbuf, tqbf, count);
@@ -114,39 +142,36 @@ void loop()
   }
   Serial.println();
 #endif
-  tft.println("Start SPI transfer");
-  // AU seems OK with Teensy 4.1 up to 16 MHz
-  SPI1.beginTransaction(SPISettings((int)16000000, MSBFIRST, (uint8_t)SPI_MODE1));
+  // tft.println("Start SPI transfer");
+  //  AU seems OK with Teensy 4.1 up to 16 MHz
+  SPI1.beginTransaction(SPISettings((int)spi_speed, MSBFIRST, (uint8_t)SPI_MODE1));
   digitalWriteFast(PIN_CS1, LOW);
-  auto st = micros();
   SPI1.transfer(txbuf, rxbuf, count);
-  auto et = micros();
   digitalWriteFast(PIN_CS1, HIGH);
   SPI1.endTransaction();
-  tft.println("Transfer complete");
-  auto tt = et - st;
-  auto pc = (float)tt / (float)count;
-  tft.println("Elapsed: " + String(tt) + " micros, per char: " + String(pc) + " micros");
 #ifdef DEBUG
   // show received data
   Serial.print("RX: ");
   for (size_t i = 0; i < count; i++)
   {
     print_hex(rxbuf[i]);
-    if (rxbuf[i] != 0xff && txbuf[i] != 0x00)
+  }
+  // tft.println(".");
+  Serial.println();
+  for (int i = 0; i < count - 1; i++)
+  {
+    if (txbuf[i] != rxbuf[i + 1])
     {
-      tft.print(String((char)rxbuf[i]));
+      return false;
     }
   }
-  tft.println(".");
-  Serial.println();
+  return true;
 #endif
 }
-
 static void setup_spi_au()
 {
   tft.println("AU SPI1 setup");
-  pinMode(PIN_SDATA_RDY, INPUT);
+  // pinMode(PIN_SDATA_RDY, INPUT);
   pinMode(PIN_CS1, OUTPUT);
   digitalWrite(PIN_CS1, HIGH);
   if (SPI1.pinIsMISO(PIN_MISO1))
@@ -205,6 +230,7 @@ static void print_hex(uint8_t x)
   Serial.print(x, HEX);
 }
 
+#if 0
 static void wait_sdata()
 {
   Serial.println("Waiting for AU data ready");
@@ -216,3 +242,4 @@ static void wait_sdata()
   Serial.println("AU data ready");
   tft.println("Got AU SDATA");
 }
+#endif
