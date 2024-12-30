@@ -1,2 +1,3 @@
 # Teensy_echo
- SPI echo test with Alchitry AU
+
+SPI echo/speed test with Alchitry AU
