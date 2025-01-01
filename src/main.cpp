@@ -20,19 +20,18 @@ constexpr uint8_t PIN_MOSI0 = 11;
 constexpr uint8_t PIN_CS0 = 10;
 // if SPI0 is IL9341
 constexpr uint8_t PIN_DC0 =
-    36;  // mandatory, can be any pin but using pin 10 (or 36 or 37 on T4.1)
-         // provides greater performance
-constexpr uint8_t PIN_RESET0 =
-    6;  // optional (but recommended), can be any pin.
+36; // mandatory, can be any pin but using pin 10 (or 36 or 37 on T4.1)
+// provides greater performance
+constexpr uint8_t PIN_RESET0 = 6; // optional (but recommended), can be any pin.
 constexpr uint8_t PIN_BACKLIGHT0 =
-    255;  // optional, set this only if the screen LED pin is connected
-          // directly to the Teensy.
+255; // optional, set this only if the screen LED pin is connected
+// directly to the Teensy.
 constexpr uint8_t PIN_TOUCH_IRQ0 =
-    255;  // optional, set this only if the touchscreen is connected on the
-          // same SPI bus
+255; // optional, set this only if the touchscreen is connected on the
+// same SPI bus
 constexpr uint8_t PIN_TOUCH_CS0 =
-    255;  // optional, set this only if the touchscreen is connected on the
-          // same SPI bus
+255; // optional, set this only if the touchscreen is connected on the
+// same SPI bus
 
 //
 // AU IS WIRED TO SPI1
@@ -46,31 +45,26 @@ constexpr uint8_t PIN_TOUCH_CS0 =
 //    • GND->Teensy GND(green)
 
 constexpr uint8_t PIN_SCK1 = 27;
-constexpr uint8_t PIN_MISO1 =
-    1;  // mandatory  (if the display has no MISO line, set this to 255 but
-        // then VSync will be disabled)
-constexpr uint8_t PIN_MOSI1 = 26;  // mandatory
-constexpr uint8_t PIN_DC1 = 38;    // mandatory, can be any pin but using pin 0
-                                 // (or 38 on T4.1) provides greater performance
-constexpr uint8_t PIN_CS1 = 0;  // optional (but recommended), can be any pin.
+constexpr uint8_t PIN_MISO1 = 1; // mandatory  (if the display has no MISO line, set this to 255 but
+// then VSync will be disabled)
+constexpr uint8_t PIN_MOSI1 = 26; // mandatory
+constexpr uint8_t PIN_DC1 = 38;   // mandatory, can be any pin but using pin 0
+// (or 38 on T4.1) provides greater performance
+constexpr uint8_t PIN_CS1 = 0; // optional (but recommended), can be any pin.
 // constexpr uint8_t PIN_SDATA_RDY = 5; // AU DATA READY signal (IN2)
 
-constexpr uint8_t PIN_RESET1 =
-    255;  // 29 optional (but recommended), can be any pin.
-constexpr uint8_t PIN_BACKLIGHT1 =
-    255;  // optional, set this only if the screen LED pin is connected
-          // directly to the Teensy.
-constexpr uint8_t PIN_TOUCH_IRQ1 =
-    255;  // optional. set this only if the touchscreen is connected on the
-          // same SPI bus
-constexpr uint8_t PIN_TOUCH_CS1 =
-    255;  // optional. set this only if the touchscreen is connected on the
-          // same SPI bus
+constexpr uint8_t PIN_RESET1 = 255; // 29 optional (but recommended), can be any pin.
+constexpr uint8_t PIN_BACKLIGHT1 = 255; // optional, set this only if the screen LED pin is connected
+// directly to the Teensy.
+constexpr uint8_t PIN_TOUCH_IRQ1 = 255; // optional. set this only if the touchscreen is connected on the
+// same SPI bus
+constexpr uint8_t PIN_TOUCH_CS1 = 255; // optional. set this only if the touchscreen is connected on the
+// same SPI bus
 
 constexpr uint32_t SPI_SPEED = 24000000;
 
 const char* tqbf =
-    "the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n\
+"the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n\
 the quick brown fox jumps over the lazy dog0123456789THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\r\n";
 
 #define LANDSCAPE
@@ -89,12 +83,7 @@ constexpr uint32_t LXP = 320;
 constexpr uint32_t LYP = 240;
 #endif
 // screen driver object
-static ILI9341_t3n tft(PIN_CS0,
-                       PIN_DC0,
-                       PIN_RESET0,
-                       PIN_MOSI0,
-                       PIN_SCK0,
-                       PIN_MISO0);  // for screen on SPI0
+static ILI9341_t3n tft(PIN_CS0, PIN_DC0, PIN_RESET0, PIN_MOSI0, PIN_SCK0, PIN_MISO0); // for screen on SPI0
 
 static void setup_spi_au();
 static void setup_spi_il9341();
@@ -137,7 +126,8 @@ void loop() {
     if (ok) {
       tft.println(String(MHz) + "MHz test OK");
       delay(2000);
-    } else {
+    }
+    else {
       break;
     }
   }
@@ -158,7 +148,7 @@ static bool spi_test(uint32_t spi_speed) {
 #endif
   //  AU seems OK with Teensy 4.1 up to 167MHz
   SPI1.beginTransaction(
-      SPISettings((int)spi_speed, MSBFIRST, (uint8_t)SPI_MODE1));
+    SPISettings((int)spi_speed, MSBFIRST, (uint8_t)SPI_MODE1));
   digitalWriteFast(PIN_CS1, LOW);
   SPI1.transfer(txbuf, rxbuf, count);
   digitalWriteFast(PIN_CS1, HIGH);
@@ -210,10 +200,10 @@ static void setup_spi_il9341() {
   if (PIN_BACKLIGHT1 != 255) {
     pinMode(PIN_BACKLIGHT1, OUTPUT);
     // digitalWrite(PIN_BACKLIGHT1, HIGH);
-    analogWrite(PIN_BACKLIGHT1, 128);  // PWM backlight level 50 %
+    analogWrite(PIN_BACKLIGHT1, 128); // PWM backlight level 50 %
   }
   pinMode(PIN_CS0, OUTPUT);
-  tft.begin();  // use default speed (write 30 MHz/ read 2 MHz)
+  tft.begin(); // use default speed (write 30 MHz/ read 2 MHz)
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(ILI9341_WHITE);
   tft.setRotation(ROT_PORTRAIT);
