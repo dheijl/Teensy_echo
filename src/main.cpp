@@ -19,18 +19,14 @@ constexpr uint8_t PIN_MISO0 = 12;
 constexpr uint8_t PIN_MOSI0 = 11;
 constexpr uint8_t PIN_CS0 = 10;
 // if SPI0 is IL9341
-constexpr uint8_t PIN_DC0 =
-36; // mandatory, can be any pin but using pin 10 (or 36 or 37 on T4.1)
+constexpr uint8_t PIN_DC0 = 36; // mandatory, can be any pin but using pin 10 (or 36 or 37 on T4.1)
 // provides greater performance
 constexpr uint8_t PIN_RESET0 = 6; // optional (but recommended), can be any pin.
-constexpr uint8_t PIN_BACKLIGHT0 =
-255; // optional, set this only if the screen LED pin is connected
+constexpr uint8_t PIN_BACKLIGHT0 = 255; // optional, set this only if the screen LED pin is connected
 // directly to the Teensy.
-constexpr uint8_t PIN_TOUCH_IRQ0 =
-255; // optional, set this only if the touchscreen is connected on the
+constexpr uint8_t PIN_TOUCH_IRQ0 = 255; // optional, set this only if the touchscreen is connected on the
 // same SPI bus
-constexpr uint8_t PIN_TOUCH_CS0 =
-255; // optional, set this only if the touchscreen is connected on the
+constexpr uint8_t PIN_TOUCH_CS0 = 255; // optional, set this only if the touchscreen is connected on the
 // same SPI bus
 
 //
@@ -146,7 +142,7 @@ static bool spi_test(uint32_t spi_speed) {
   }
   Serial.println();
 #endif
-  //  AU seems OK with Teensy 4.1 up to 167MHz
+  //  AU seems OK with Teensy 4.1 up to 17MHz
   SPI1.beginTransaction(
     SPISettings((int)spi_speed, MSBFIRST, (uint8_t)SPI_MODE1));
   digitalWriteFast(PIN_CS1, LOW);
