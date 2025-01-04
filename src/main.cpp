@@ -109,13 +109,12 @@ void loop() {
     }
     if (ok) {
       tft.println(String(MHz) + "MHz test OK");
-      delay(2000);
+      delay(500);
     }
     else {
       break;
     }
   }
-  delay(1000);
 }
 
 static bool spi_test(uint32_t spi_speed, uint32_t loop) {
@@ -147,7 +146,7 @@ static bool spi_test(uint32_t spi_speed, uint32_t loop) {
   for (size_t i = 0; i < count - 1; ++i) {
     if (txbuf[i] != rxbuf[i + 1]) {
 
-      Serial.println("err at " + String(i) + "in loop " + String(loop));
+      Serial.println(String(spi_speed / 1000000) + "MHz:  err at " + String(i) + " in loop " + String(loop));
       return false;
     }
   }
