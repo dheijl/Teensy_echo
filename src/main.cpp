@@ -9,7 +9,7 @@
 #include <ILI9341_t3n.h>
 #include <ili9341_t3n_font_Arial.h>
 
-#define DEBUG
+//#define DEBUG
 
 //
 // IL9341 is WIRED TO SPI0
@@ -147,7 +147,7 @@ static bool spi_test(uint32_t spi_speed, uint32_t loop) {
   for (size_t i = 0; i < count - 1; ++i) {
     if (txbuf[i] != rxbuf[i + 1]) {
 
-      Serial.println("err at " + String(i));
+      Serial.println("err at " + String(i) + "in loop " + String(loop));
       return false;
     }
   }
