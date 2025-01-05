@@ -102,6 +102,7 @@ void loop() {
     for (int i = 0; i < 4000; i++) {
       if (!(ok = spi_test(speed, i))) {
         tft.setTextColor(ILI9341_RED);
+        tft.setCursor(80, 150);
         tft.println(String(MHz) + "MHz test failed");
         delay(2000);
         break;
@@ -145,8 +146,12 @@ static bool spi_test(uint32_t spi_speed, uint32_t loop) {
 #endif
   for (size_t i = 0; i < count - 1; ++i) {
     if (txbuf[i] != rxbuf[i + 1]) {
-
-      Serial.println(String(spi_speed / 1000000) + "MHz:  err at " + String(i) + " in loop " + String(loop));
+      String e = String(spi_speed / 1000000) + "MHz:  err at " + String(i) + " in loop " + String(loop);
+      tft.setTextColor(ILI9341_ORANGE);
+      tft.println(e + "\r\n");
+#ifdef DEBUG
+      Serial.println(e);
+#endif
       return false;
     }
   }
