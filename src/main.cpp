@@ -9,7 +9,7 @@
 #include <ILI9341_t3n.h>
 #include <ili9341_t3n_font_Arial.h>
 
-//#define DEBUG
+#define DEBUG
 
 //
 // IL9341 is WIRED TO SPI0
@@ -91,6 +91,9 @@ void setup() {
 static unsigned char txbuf[256];
 static unsigned char rxbuf[256];
 
+const uint32_t LOOPS = 4;
+const uint32_t LOOP_DELAY = 100;
+
 void loop() {
   for (uint32_t speed = 12000000; speed <= 33000000; speed += 1000000) {
     tft.fillScreen(ILI9341_BLACK);
@@ -99,7 +102,7 @@ void loop() {
     uint32_t MHz = speed / 1000000;
     tft.print("Test at " + String(MHz) + "MHz - ");
     bool ok = true;
-    for (int i = 0; i < 4000; i++) {
+    for (uint32_t i = 0; i < LOOPS; i++) {
       if (!(ok = spi_test(speed, i))) {
         tft.setTextColor(ILI9341_RED);
         tft.setCursor(80, 150);
@@ -107,6 +110,7 @@ void loop() {
         delay(2000);
         break;
       }
+      delay(LOOP_DELAY);
     }
     if (ok) {
       tft.println(String(MHz) + "MHz test OK");
