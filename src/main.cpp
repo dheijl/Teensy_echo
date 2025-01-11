@@ -91,8 +91,8 @@ void setup() {
 static unsigned char txbuf[256];
 static unsigned char rxbuf[256];
 
-const uint32_t LOOPS = 4;
-const uint32_t LOOP_DELAY = 100;
+const uint32_t LOOPS = 4; // 4000
+const uint32_t LOOP_DELAY = 100; // 0
 
 void loop() {
   for (uint32_t speed = 12000000; speed <= 33000000; speed += 1000000) {
