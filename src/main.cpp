@@ -95,7 +95,7 @@ const uint32_t LOOPS = 4; // 4000
 const uint32_t LOOP_DELAY = 100; // 0
 
 void loop() {
-  for (uint32_t speed = 12000000; speed <= 33000000; speed += 1000000) {
+  for (uint32_t speed = 12000000; speed <= 50000000; speed += 1000000) {
     tft.fillScreen(ILI9341_BLACK);
     tft.setCursor(0, 110);
     tft.setTextColor(ILI9341_WHITE);
