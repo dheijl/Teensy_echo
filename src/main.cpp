@@ -9,7 +9,7 @@
 #include <ILI9341_t3n.h>
 #include <ili9341_t3n_font_Arial.h>
 
-#define DEBUG
+//#define DEBUG
 
 //
 // IL9341 is WIRED TO SPI0
@@ -90,10 +90,13 @@ void setup() {
 
 static unsigned char txbuf[256];
 static unsigned char rxbuf[256];
-
+#ifdef DEBUG
 const uint32_t LOOPS = 4; // 4000
 const uint32_t LOOP_DELAY = 100; // 0
-
+#else
+const uint32_t LOOPS = 4000;
+const uint32_t LOOP_DELAY = 0;
+#endif
 void loop() {
   for (uint32_t speed = 12000000; speed <= 50000000; speed += 1000000) {
     tft.fillScreen(ILI9341_BLACK);
